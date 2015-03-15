@@ -8,6 +8,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../core-icon/core-icon.html">
 
 <polymer-element name="paper-calculator-output" attributes="expression result error">
 
@@ -87,12 +89,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         overflow: hidden;
       }
 
+      #close {
+        position: fixed;
+        color: rgba(black, 0.75);
+
+        height: 50px;
+        width: 50px;
+      }
+
     </style>
 
     <div class="output {{ {error: error, 'show-result': result && !error } | tokenList }}">
 
+      <core-icon id='close' icon='close' on-tap='{{tapClose}}'></core-icon>
+
       <div class="expression-outer" horizontal end-justified center layout>
-        <div id="expression">{{expression}}</div>
+
+        <div id="expression">
+          {{expression}}
+        </div>
         <div id="error">{{error}}</div>
       </div>
 
@@ -109,7 +124,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
 
-    Polymer('paper-calculator-output');
+    Polymer('paper-calculator-output', {
+      tapClose: function() {
+        this.fire('close-calculator');
+      }
+    });
 
   </script>
 

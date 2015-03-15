@@ -81,18 +81,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     </style>
     
-    <paper-calculator-panels id="outerPanels" class="{{ {narrow : !wideMode} | tokenList}}" margin="{{margin}}" wideMode="{{wideMode}}" drawerWidthRatio="0.8">
+    <paper-calculator-panels id="outerPanels" class="{{ {narrow : !wideMode} | tokenList}}" margin="0" wideMode="{{wideMode}}" drawerWidthRatio="0.8">
     
       <paper-calculator-keygrid id="standard" main keys="{{standardKeys}}"></paper-calculator-keygrid>
     
-      <paper-calculator-panels id="innerPanels" drawer margin="{{margin}}" wideMode="{{wideMode}}" drawerWidthRatio="0.3">
-      
-        <paper-calculator-keygrid id ="advanced" main keys="{{advancedKeys}}"></paper-calculator-keygrid>
-        
-        <paper-calculator-keygrid id="mode" drawer keys="{{modeKeys}}"></paper-calculator-keygrid>
-        
-      </paper-calculator-panels>
-      
     </paper-calculator-panels>
     
   </template>
@@ -100,8 +92,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
 
     Polymer('paper-calculator-keypad', {
-      
-      margin: 24,
       
       findKey: function(label) {
         var ps = [this.$.standard, this.$.advanced, this.$.mode];
