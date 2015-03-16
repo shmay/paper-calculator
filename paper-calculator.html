@@ -23,7 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="paper-calculator-keypad.html">
 <link rel="import" href="paper-calculator-math.html">
 
-<polymer-element name="paper-calculator" attributes="expression result wideMode responsiveWidth" tabindex="0">
+<polymer-element name="paper-calculator" hidden attributes="expression result wideMode responsiveWidth" tabindex="0">
 
   <template>
 
@@ -88,7 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div id="resultInk" class="{{ {spill : result, error : error} | tokenList }}"></div>
 
-    <paper-calculator-output id="output" class="{{ {wide : wideMatches || wideMode} | tokenList}}" expression="{{expression}}" result="{{result}}" error="{{error}}"></paper-calculator-output>
+    <paper-calculator-output on-close-calculator='{{close}}' id="output" class="{{ {wide : wideMatches || wideMode} | tokenList}}" expression="{{expression}}" result="{{result}}" error="{{error}}"></paper-calculator-output>
 
     <paper-calculator-keypad id="keypad" wideMode="{{wideMatches || wideMode}}" standardKeys="{{standardKeys}}" advancedKeys="{{advancedKeys}}" modeKeys="{{modeKeys}}" on-cal-keytap="{{keyTap}}"></paper-calculator-keypad>
 
@@ -135,6 +135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       wideMode: false,
 
+
       /**
        * Min-width when calculator changes to wide layout.
        *
@@ -161,6 +162,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @default ''
        */
       result: '',
+
+      /**
+       * Calculator hidden by default
+       *
+       * @attribute hidden
+       * @type boolean
+       * @default true
+       */
+      hidden: true,
+
+      /**
+       * Opens the calculator
+       *
+       * @method open
+       * @param {object} callbackList will fn callbackList.onClose on close
+       * with result
+       */
+      open: function(value, callbackObj) {
+        this.removeAttribute('hidden');
+        this.expression = value || '';
+        if (callbackObj && callbackObj.onClose) {
+          this.onClose = callbackObj.onClose;
+        }
+        this.async(function() {
+          this.updateResultInk();
+        });
+      },
+
+      close: function() {
+        this.setAttribute('hidden', true);
+        if (this.onClose) {
+          console.log(this.result || this.expression);
+          this.onClose(this.result);
+          this.onClose = null;
+        }
+      },
+
+      detached: function() {
+        this.onClose = null;
+      },
 
       eventDelegates: {
         keydown: 'keyDown',
