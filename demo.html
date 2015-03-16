@@ -50,7 +50,28 @@
 </head>
 <body unresolved>
 
-  <paper-calculator responsiveWidth="800px"></paper-calculator>
+  <paper-calculator></paper-calculator>
+
+  <script>
+
+
+    (function(document) {
+      'use strict';
+
+      setTimeout(function() {
+        var calc = document.querySelector('paper-calculator');
+        var val = '2';
+        calc.open(val);
+
+        document.body.addEventListener('click', function() {
+          if (calc.hidden) {
+            console.log('open');
+            calc.open(val);
+          }
+        }, false);
+      }, 10);
+    })(wrap(document));
+  </script>
   
 </body>
 </html>

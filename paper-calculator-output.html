@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../core-icons/core-icons.html">
 <link rel="import" href="../core-icon/core-icon.html">
 
-<polymer-element name="paper-calculator-output" attributes="expression result error">
+<polymer-element name="paper-calculator-output" attributes="expression result error pct">
 
   <template>
 
@@ -25,11 +25,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: relative;
         width: 100%;
         height: 100%;
-        padding-right: 30px;
+        padding-right: 10px;
+        padding-left: 10px;
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         background-color: transparent;
-        color: #b3b3b3;
+        color: white;
         overflow: hidden;
       }
 
@@ -56,6 +57,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         white-space: nowrap;
       }
 
+      .output.error > div~div {
+        display: none;
+      }
+
       .output.error #expression {
         display: none;
       }
@@ -63,59 +68,93 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #error {
         display: none;
         color: #eee;
+        height: 100%;
+        font-size: 50px;
+        text-align:right;
+        padding-right: 15px;
       }
 
       .output.error #error {
         display: block;
       }
 
+
+      .output.error #error > div {
+        height: 100%;
+        font-size: 70px;
+      }
+
       .result {
         visibility: hidden;
+        font-size: 7px;
       }
 
       .show-result > .result {
         visibility: visible;
-        height: 62%;
+        height: 35%;
         font-weight: 400;
       }
 
       .result-equal {
-        padding: 0 30px;
+        padding: 0 10px;
         font-size: 2.5em;
       }
 
       .result-value {
-        font-size: 5em;
+        font-size: 3em;
         overflow: hidden;
       }
 
+      #actions {
+        padding: 10px;
+      }
+
       #close {
-        position: fixed;
-        color: rgba(black, 0.75);
+        color: rgba(255,255,255,0.55);
 
         height: 50px;
         width: 50px;
+        text-transform:uppercase;
+      }
+
+      #ok {
+        text-transform:uppercase;
+        text-align: right;
+        width:92%;
+      }
+
+      #hold {
+        width: 100%;
+        border-bottom: 2px solid white;
+        padding-bottom: 3px;
       }
 
     </style>
 
-    <div class="output {{ {error: error, 'show-result': result && !error } | tokenList }}">
+    <div class="output show-result {{ {error: error} | tokenList }}">
 
-      <core-icon id='close' icon='close' on-tap='{{tapClose}}'></core-icon>
-
-      <div class="expression-outer" horizontal end-justified center layout>
-
-        <div id="expression">
-          {{expression}}
+      <div id="error">
+        <div layout horizontal center end-justified>
+          <div>{{error}}</div>
         </div>
-        <div id="error">{{error}}</div>
+      </div>
+
+      <div id='actions' layout horizontal>
+        <div id='close' on-tap='{{tapClose}}'>cancel</div>
+        <div id='ok' on-tap='{{tapOk}}'>ok</div>
       </div>
 
       <div class="result" horizontal center layout>
+        <div id='hold' horizontal center layout>
+          <div class="result-equal">Andrew's Share =</div>
+          <div class="result-value" flex horizontal end-justified layout>${{result}}</div>
+        </div>
+      </div>
 
-        <div class="result-equal">=</div>
-        <div class="result-value" flex horizontal end-justified layout>{{result}}</div>
-
+      <div class="expression-outer" horizontal end-justified center layout>
+        <div id="expression">
+          {{expression}}
+        </div>
       </div>
 
     </div>
@@ -123,9 +162,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
+    'use strict';
 
     Polymer('paper-calculator-output', {
       tapClose: function() {
+        console.log('tapClose');
         this.fire('close-calculator');
       }
     });

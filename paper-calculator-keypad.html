@@ -91,6 +91,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
 
+   /* dont issue warning for no-cond-assign */ 
+   /* http://jslinterrors.com/unexpected-assignment-expression */
+   /*jshint -W084 */ 
+    'use strict';
+
     Polymer('paper-calculator-keypad', {
       
       findKey: function(label) {

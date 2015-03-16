@@ -28,11 +28,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
 
     <style>
-
       :host {
         display: block;
         position: relative;
-        background-color: #eee;
+        background-color: #FF9300;
         overflow: hidden;
 
         -webkit-user-select: none;
@@ -75,20 +74,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       #resultInk.error {
         background-color: #f50057;
-      }
 
-      #resultInk.spill {
         -webkit-transform: translateZ(0) scale(1);
         transform: translateZ(0) scale(1);
-        -webkit-transition: -webkit-transform 0.38s ease-out;
-        transition: transform 0.38s ease-out;
+        -webkit-transition: -webkit-transform 0.4s ease-out;
+        transition: transform 0.4s ease-out;
       }
 
     </style>
 
-    <div id="resultInk" class="{{ {spill : result, error : error} | tokenList }}"></div>
+    <div id="resultInk" class="{{ {error : error} | tokenList }}"></div>
 
-    <paper-calculator-output on-close-calculator='{{close}}' id="output" class="{{ {wide : wideMatches || wideMode} | tokenList}}" expression="{{expression}}" result="{{result}}" error="{{error}}"></paper-calculator-output>
+    <paper-calculator-output on-close-calculator='{{close}}' id="output" class="{{ {wide : wideMatches || wideMode} | tokenList}}" expression="{{expression}}" result="{{result}}" error="{{error}}">
+    </paper-calculator-output>
 
     <paper-calculator-keypad id="keypad" wideMode="{{wideMatches || wideMode}}" standardKeys="{{standardKeys}}" advancedKeys="{{advancedKeys}}" modeKeys="{{modeKeys}}" on-cal-keytap="{{keyTap}}"></paper-calculator-keypad>
 
@@ -99,19 +97,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
+    'use strict';
 
     Polymer('paper-calculator', {
-
       domReady: function() {
         this.updateResultInk();
         window.addEventListener('resize', this.updateResultInk.bind(this));
       },
+
       standardKeys: [
         ['7', '4', '1', '.'],
         ['8', '5', '2', '0'],
         ['9', '6', '3', '='],
         ['DEL', '+', '-', '\u00F7', '\u00D7'],
       ],
+
+      fnRegex: /\+|\-|\u00F7|\u00D7/,
 
       advancedKeys: [
         ['2nd', '1/x', 'x!', 'sin', 'sinh', 'EXP'],
@@ -176,15 +177,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * Opens the calculator
        *
        * @method open
-       * @param {object} callbackList will fn callbackList.onClose on close
+       * @param {object} callbackList will fn callbackList.onOk on OK
        * with result
        */
       open: function(value, callbackObj) {
         this.removeAttribute('hidden');
-        this.expression = value || '';
-        if (callbackObj && callbackObj.onClose) {
-          this.onClose = callbackObj.onClose;
+        this.result = this.expression = value || '';
+        if (callbackObj && callbackObj.onOk) {
+          this.onOk = callbackObj.onOk;
         }
+
+        // sets up ink position
         this.async(function() {
           this.updateResultInk();
         });
@@ -192,15 +195,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       close: function() {
         this.setAttribute('hidden', true);
-        if (this.onClose) {
-          console.log(this.result || this.expression);
-          this.onClose(this.result);
-          this.onClose = null;
+
+        if (this.onOk) {
+          this.onOk(this.result || this.expression);
+          this.onOk = null;
         }
       },
 
       detached: function() {
-        this.onClose = null;
+        this.onOk = null;
       },
 
       eventDelegates: {
@@ -224,9 +227,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       keyTap: function(e) {
         var k = e.detail.key;
-        if (this.modeKeys[0].indexOf(k) < 0) {
-          this.processKey(k);
-        }
+        this.processKey(k);
       },
 
       keyDown: function(e) {
@@ -245,15 +246,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           k = String.fromCharCode(c);
         }
-        var key = this.$.keypad.findKey(k);
+
         this.processKey(k);
         e.preventDefault();
       },
 
       processKey: function(k) {
-        if (this.result && k !== '=') {
+        //if (this.result && k !== '=') {
+        //  this.clear();
+        //}
+
+        if (this.error) {
           this.clear();
         }
+
+        // if expression contains a ÷+×- and k is a ÷+×-, then eval expression
+        // and add the ÷+×- to the end
+        if (this.expression.match(this.fnRegex) && k.match(this.fnRegex)) {
+          this.eval.call(this);
+        } 
+
         if (k === '=') {
           this.async(this.eval);
         } else if (k === 'DEL') {

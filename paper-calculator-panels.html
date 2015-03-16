@@ -81,6 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
   
   <script>
+    'use strict';
   
     Polymer('paper-calculator-panels', {
       
@@ -150,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.drawer.classList.remove('dragging');
         var old = this.opened;
         this.opened = e.xDirection === -1;
-        if (old == this.opened) {
+        if (old === this.opened) {
           this.openedChanged();
         }
         e.stopPropagation();

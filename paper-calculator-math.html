@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <polymer-element name="paper-calculator-math" attributes="expression result">
   
   <script>
+    'use strict';
   
     Polymer('paper-calculator-math', {
       
@@ -20,6 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         s = s.replace(/\u00D7/g, '*').replace(/\u00F7/g, '/');
         try {
           this.result = eval(s);
+          this.expression = (this.result).toString();
         } catch (x) {
           this.result = '?';
         }

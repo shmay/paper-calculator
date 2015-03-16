@@ -1,0 +1,11 @@
+{
+  "name": "slice-paper-calculator",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "",
+    "grunt-vulcanize": "",
+    "jshint-stylish": "",
+    "grunt-contrib-jshint": ""
+  }
+}
